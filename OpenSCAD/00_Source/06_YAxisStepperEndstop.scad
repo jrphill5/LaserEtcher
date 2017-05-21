@@ -1,14 +1,14 @@
 include <00_GlobalVariables.scad>
 
 use <01_StepperMount.scad>
+use <06_YAxisBearingBracket.scad>
 use <06_YAxisBlankEndstop.scad>
 
 module 06_YAxisStepperEndstop(){
     difference(){
-        union(){
-            06_YAxisBlankEndstop();
-
-        }
+        06_YAxisBlankEndstop();
+        translate([0,-eps,-(Rotary_Bearing_OD/2.0+Toolhead_Margin)-Extrusion_W/2.0-Guide_Rod_D/2.0])
+            rotate([-90,0,0]) cylinder(d=Rotary_Bearing_OD, h=Extrusion_W+2*eps);
         translate([0,0,-(Rotary_Bearing_OD/2.0+Toolhead_Margin+Extrusion_W/2.0+Guide_Rod_D/2.0)])
             rotate([-90,0,0])
                 for(i=[0:90:270])
@@ -26,6 +26,17 @@ module 06_YAxisStepperEndstop(){
                                 translate([0,0,Stepper_Mount_Flange_T/2.0])
                                     cube([Stepper_W,Stepper_W,Stepper_Mount_Flange_T], center=true);
                             }
+
+        // Limit switch   
+        translate([0,-Toolhead_Margin,-Endstop_Switch_W/2.0-Endstop_Switch_S]) 
+            rotate([-90,0,0]){
+                translate([0, 0, Endstop_Switch_D/2.0])
+                    cube([Endstop_Switch_L, Endstop_Switch_W, Endstop_Switch_D+eps], center=true);
+                for(i = [0,1,2]){
+                    translate([(i-1)*Endstop_Switch_Hole_S, 0, -eps])
+                        cylinder(d = Endstop_Switch_Hole_D, h = Extrusion_W+Toolhead_Margin+2*eps);
+                }
+            }
     }
 
 }
